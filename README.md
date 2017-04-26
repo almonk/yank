@@ -27,6 +27,8 @@ For example, given `tachyons.css` as our **definitions** file, we could write th
 
 [You can view this example on jsfiddle](https://jsfiddle.net/almonk/dvdzjvLa/).
 
+---
+
 Running `./yank` on the command line will compile this file into the following `myclasses--compiled.css`:
 
 ```
