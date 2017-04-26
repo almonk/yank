@@ -1,0 +1,16 @@
+.my-button {
+  @yank .bg-blue;
+  @yank .white;
+  @yank .link;
+  @yank .pa2;
+  @yank .br2;
+}
+
+.my-input {
+  @yank .bg-white;
+  @yank .ba;
+  @yank .b--gray;
+  @yank .dark-gray;
+  @yank .br2;
+  @yank .pa2;
+}

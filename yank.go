@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -21,10 +22,17 @@ func checkErr(err error) {
 }
 
 func main() {
-	fmt.Println("♥  Compiling hk-helpers...")
+	// Params
+	inputFilePtr := flag.String("input", "myclasses.css", "File where your @yank rules are defined")
+	definitionsFilePtr := flag.String("definitions", "mycss.css", "File that @yank uses to expand your classes")
+	outputFilePtr := flag.String("output", "myclasses--compiled.css", "CSS file with compiled @yank rules")
 
-	inputFile := "src/_hk.css"
-	getPurpleBuffer := readPurple()
+	flag.Parse()
+
+	fmt.Println("♥  Compiling @yank...")
+
+	inputFile := *inputFilePtr
+	getPurpleBuffer := readPurple(*definitionsFilePtr)
 	ss := css.Parse(getPurpleBuffer)
 	rules := ss.GetCSSRuleList()
 
@@ -32,14 +40,14 @@ func main() {
 	checkErr(err)
 	defer file.Close()
 
-	outputFile, err := os.Create("src/_hk--compiled.css")
+	outputFile, err := os.Create(*outputFilePtr)
 	checkErr(err)
 	defer outputFile.Close()
 
 	selectorCount := 0
 
-	outputFile.WriteString("/* Don't edit this file directly */" + "\n")
-	outputFile.WriteString("/* See the docs at https://github.com/heroku/purple3/blob/master/readme.md */" + "\n")
+	outputFile.WriteString("/* This file was compiled with @yank */" + "\n")
+	outputFile.WriteString("/* See the docs at https://github.com/almonk/yank */" + "\n")
 
 	fileScanner := bufio.NewScanner(file)
 	for fileScanner.Scan() {
@@ -96,7 +104,9 @@ func main() {
 
 	resultSelectorCount := fmt.Sprintf("✓  Found %v classes", selectorCount)
 	color.Green(resultSelectorCount)
-	color.Green("✓  Created /src/_hk--compiled.css")
+
+	successMsg := fmt.Sprintf("✓  Created %s", *outputFilePtr)
+	color.Green(successMsg)
 }
 
 func sanitize(input string) string {
@@ -105,8 +115,8 @@ func sanitize(input string) string {
 	return result
 }
 
-func readPurple() string {
-	purpleFile := "css/purple3.css"
+func readPurple(inputFile string) string {
+	purpleFile := inputFile
 
 	dat, err := ioutil.ReadFile(purpleFile)
 	checkErr(err)
